@@ -81,38 +81,47 @@ function Header() {
 
 function Menu() {
   const pizzas = pizzaData;
-  //   const pizzas = [];
+  // const pizzas = [];
   const numPizzas = pizzaData.length;
 
   return (
     <main className="menu">
       <h2>Our Menu</h2>
 
-      {numPizzas > 0 && (
-        <ul className="pizzas">
-          {pizzas.map((pizza) => (
-            <Pizza key={pizza.key} pizzaObjects={pizza} />
-          ))}
-        </ul>
+      {numPizzas > 0 ? (
+        <>
+          <p>
+            Authentic Italian Cuisine with Fresh Ingredients, 6 Creative Pizzas{" "}
+            <br /> to Choose From! All from a Stonebaked Oven, No Preservatives!
+          </p>
+
+          <ul className="pizzas">
+            {pizzas.map((pizza) => (
+              <Pizza key={pizza.key} pizzaObjects={pizza} />
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p> We're still working on our menu. Stay tuned!</p>
       )}
 
       {/* <Pizza
         name="Pizza Spinaci"
-        ingredients="Tomato, mozarella, spinach, and ricotta cheese"
+        ingredients="Tomato, mozzarella, spinach, and ricotta cheese"
         photoName="pizzas/spinaci.jpg"
         price={12}
         soldOut={false}
       />
       <Pizza
         name="Pizza Funghi"
-        ingredients="Tomato, mozarella, mushrooms, and onion"
+        ingredients="Tomato, mozzarella, mushrooms, and onion"
         photoName="pizzas/funghi.jpg"
         price={12}
         soldOut={false}
       />
       <Pizza
         name="Pizza Margherita"
-        ingredients="Tomato and mozarella"
+        ingredients="Tomato and mozzarella"
         photoName="pizzas/margherita.jpg"
         price={10}
         soldOut={false}
@@ -121,43 +130,56 @@ function Menu() {
   );
 }
 
-function Pizza(props) {
+function Pizza({ pizzaObjects }) {
+  // if (pizzaObjects.soldOut) return null;
+
   return (
-    <li className="pizza">
-      <p>{props.pizzaObjects.key}</p>
-      <img src={props.pizzaObjects.photoName} alt={props.pizzaObjects.name} />
-      <h3>{props.pizzaObjects.name}</h3>
-      <p>{props.pizzaObjects.ingredients}</p>
-      <span>€{props.pizzaObjects.price + 3}</span>
-      <p>{props.pizzaObjects.soldOut ? "Sold Out" : "Available"}</p>
+    <li className={`pizza ${pizzaObjects.soldOut ? "sold-out" : ""}`}>
+      <p>{pizzaObjects.key}</p>
+      <img src={pizzaObjects.photoName} alt={pizzaObjects.name} />
+      <h3>{pizzaObjects.name}</h3>
+      <p>{pizzaObjects.ingredients}</p>
+      {/* {pizzaObjects.soldOut ? (
+        <span>SOLD OUT</span>
+      ) : (
+        <span>{pizzaObjects.price}</span>
+      )} */}
+      <span>{pizzaObjects.soldOut ? "SOLD OUT" : pizzaObjects.price}</span>
     </li>
   );
 }
 
 function Footer() {
   const hour = new Date().getHours();
-
-  const openHours = 9;
-  const closeHours = 22;
-  const isOpen = hour >= openHours && hour <= closeHours;
+  const openHours = 17;
+  const closeHours = 24;
+  const isOpen = hour >= openHours && hour < closeHours;
+  const currentYear = new Date().getFullYear();
 
   return (
     <footer style={{ textAlign: "center" }} className="footer">
       {new Date().toLocaleString()}.{" "}
-      {isOpen ? "Yes we're Open!" : "Sorry, we're Closed!"}
-      {isOpen && (
-        <div className="order">
-          <p style={{ textAlign: "center" }}>
-            We waiting for your Order, Closing at {closeHours}:00!!{" "}
-            <span role="img">🍕</span>
-          </p>
-          <button className="btn">Place Order</button>
-        </div>
+      {isOpen
+        ? `We're Open! We close at ${closeHours}:00.`
+        : `Sorry we closed at ${closeHours}:00.`}
+      {isOpen ? (
+        <Order closeHours={closeHours} openHours={openHours} />
+      ) : (
+        <p>Come back tomorrow! We open from {openHours}:00.</p>
       )}
-      <div className="copywrite">
-        © {new Date().getFullYear()} Fast React Pizza Co.
-      </div>
+      <div className="copywrite">&copy; {currentYear} Fast React Pizza Co.</div>
     </footer>
+  );
+}
+
+function Order({ closeHours, openHours }) {
+  return (
+    <div className="order">
+      <p style={{ textAlign: "center" }}>
+        Open from {openHours}:00 to {closeHours}:00!! <span role="img">🍕</span>
+      </p>
+      <button className="btn">Place Order</button>
+    </div>
   );
 }
 
